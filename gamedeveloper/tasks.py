@@ -1,21 +1,28 @@
 from textwrap import dedent
 from crewai import Task
 
-class GameTasks():
-	def code_task(self, agent, game):
-		return Task(description=dedent(f"""You will create a game using python, these are the instructions:
+
+class GameTasks:
+    def code_task(self, agent, game):
+        return Task(
+            description=dedent(
+                f"""You will create a game using python, these are the instructions:
 
 			Instructions
 			------------
     	{game}
 
 			Your Final answer must be the full python code, only the python code and nothing else.
-			"""),
-			agent=agent
-		)
+			"""
+            ),
+            expected_output="import pygame",
+            agent=agent,
+        )
 
-	def review_task(self, agent, game):
-		return Task(description=dedent(f"""\
+    def review_task(self, agent, game):
+        return Task(
+            description=dedent(
+                f"""\
 			You are helping create a game using python, these are the instructions:
 
 			Instructions
@@ -27,12 +34,16 @@ class GameTasks():
 			and security vulnerabilities.
 
 			Your Final answer must be the full python code, only the python code and nothing else.
-			"""),
-			agent=agent
-		)
+			"""
+            ),
+            expected_output="The code is complete and does the job that it is supposed to do.",
+            agent=agent,
+        )
 
-	def evaluate_task(self, agent, game):
-		return Task(description=dedent(f"""\
+    def evaluate_task(self, agent, game):
+        return Task(
+            description=dedent(
+                f"""\
 			You are helping create a game using python, these are the instructions:
 
 			Instructions
@@ -43,6 +54,8 @@ class GameTasks():
 			does the job that it is supposed to do.
 
 			Your Final answer must be the full python code, only the python code and nothing else.
-			"""),
-			agent=agent
-		)
+			"""
+            ),
+            expected_output="The code is complete and does the job that it is supposed to do.",
+            agent=agent,
+        )
