@@ -5,13 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 search_tool = SerperDevTool()
-
+"""
 from langchain_community.llms import Ollama
 
-ollama_llm = Ollama(model="gemma", temperature=0.1)
+llm = Ollama(model="gemma", temperature=0.1)
+"""
 
-#
-# Define your agents with roles and goals
+
 researcher = Agent(
     role="Senior Research Analyst",
     goal="Uncover cutting-edge developments in AI and data science",
@@ -20,7 +20,7 @@ researcher = Agent(
     verbose=True,
     allow_delegation=False,
     tools=[search_tool],
-    llm=ollama_llm,
+    llm=llm,
 )
 
 writer = Agent(
@@ -30,7 +30,7 @@ writer = Agent(
   making complex tech topics interesting and easy to understand.""",
     verbose=True,
     allow_delegation=True,
-    llm=ollama_llm,
+    llm=llm,
 )
 
 # Create tasks for your agents
