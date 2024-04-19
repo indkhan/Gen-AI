@@ -2,10 +2,11 @@ import os
 from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool
 from dotenv import load_dotenv
+from langchain_community.tools import DuckDuckGoSearchRun
 
-
+search = DuckDuckGoSearchRun()
 load_dotenv()
-search_tool = SerperDevTool()
+# search_tool = SerperDevTool()
 """
 from langchain_community.llms import Ollama
 
@@ -13,7 +14,9 @@ llm = Ollama(model="gemma", temperature=0.1)
 """
 from langchain_groq import ChatGroq
 
-llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model="")
+llm = ChatGroq(
+    api_key=os.getenv("GROQ_API_KEY"), model="llama3-70b-8192"
+)  # mixtra1-8x7b-32768
 
 researcher = Agent(
     role="Senior Research Analyst",
@@ -22,8 +25,9 @@ researcher = Agent(
   skilled in identifying trends and analyzing complex data.""",
     verbose=True,
     allow_delegation=False,
-    tools=[search_tool],
+    tools=[search],
     llm=llm,
+    max_iter=10,
 )
 
 writer = Agent(
@@ -34,6 +38,7 @@ writer = Agent(
     verbose=True,
     allow_delegation=True,
     llm=llm,
+    max_iter=10,
 )
 
 # Create tasks for your agents
