@@ -3,6 +3,7 @@ from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool
 from dotenv import load_dotenv
 
+
 load_dotenv()
 search_tool = SerperDevTool()
 """
@@ -10,7 +11,9 @@ from langchain_community.llms import Ollama
 
 llm = Ollama(model="gemma", temperature=0.1)
 """
+from langchain_groq import ChatGroq
 
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model="")
 
 researcher = Agent(
     role="Senior Research Analyst",
