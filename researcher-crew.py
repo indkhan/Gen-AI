@@ -20,9 +20,9 @@ llm = ChatGroq(
 
 researcher = Agent(
     role="Senior Research Analyst",
-    goal="Uncover cutting-edge developments in AI and data science",
-    backstory="""You are an expert at a technology research group, 
-  skilled in identifying trends and analyzing complex data.""",
+    goal="Uncover groundbreaking insights about it",
+    backstory="""You are a highly skilled researcher with a talent for delving into complex problems and extracting valuable knowledge. 
+    You have a broad research background and a knack for identifying crucial trends across various disciplines.""",
     verbose=True,
     allow_delegation=False,
     tools=[search],
@@ -30,11 +30,12 @@ researcher = Agent(
     max_iter=10,
 )
 
+
 writer = Agent(
-    role="Tech Content Strategist",
-    goal="Craft compelling content on tech advancements",
+    role="Content Strategist",
+    goal="Craft compelling content on it",
     backstory="""You are a content strategist known for 
-  making complex tech topics interesting and easy to understand.""",
+  making complex  topics interesting and easy to understand.""",
     verbose=True,
     allow_delegation=True,
     llm=llm,
