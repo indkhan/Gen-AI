@@ -72,7 +72,8 @@ class Reply(BaseModel):
     category: TicketCategory = Field(
         description="Correctly assign one of the predefined categories"
     )
-
+Reply(content="test", category="order")
+Reply(content="test", category="banana")
 
 # Extract structured data from natural language
 reply = client.chat.completions.create(
