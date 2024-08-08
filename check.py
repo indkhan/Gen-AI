@@ -1,10 +1,24 @@
 import requests
 from bs4 import BeautifulSoup
 from typing import List
-from googlesearch import search  # Ensure you have this installed: pip install googlesearch-python
+from googlesearch import search
 import json
 import logging
 from itertools import islice
+from langchain_community.document_loaders import WebBaseLoader
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+from langchain.llms import OpenAI
+from langchain_groq import ChatGroq
+from dotenv import load_dotenv
+load_dotenv()
+llm = ChatGroq(
+    model="llama3-70b-8192",
+    temperature=0,
+)
+
+# Configure logging
+logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Cache:
     def __init__(self, cache_file="cache.json"):
@@ -36,10 +50,9 @@ class SearchTool:
     def search(self, query: str, num_results: int = 5) -> List[str]:
         cache_key = f"search:{query}:{num_results}"
         cached_result = self.cache.get(cache_key)
-        if cached_result:
+        if (cached_result):
             return cached_result
         try:
-            # Use islice to limit the number of search results
             result = list(islice(search(query), num_results))
             self.cache.set(cache_key, result)
             return result
@@ -47,43 +60,45 @@ class SearchTool:
             logging.error(f"Error during search: {str(e)}")
             return []
 
-class ScrapeTool:
-    def __init__(self, cache: Cache):
-        self.cache = cache
+def load_data(url):
+    loader = WebBaseLoader(url)
+    data = loader.load()
+    return data
 
-    def scrape(self, url: str) -> str:
-        cache_key = f"scrape:{url}"
-        cached_result = self.cache.get(cache_key)
-        if cached_result:
-            return cached_result
-        try:
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, 'html.parser')
-            text = ' '.join([tag.get_text() for tag in soup.find_all(['p', 'h1', 'h2', 'h3'])])
-            result = text[:1000]
-            self.cache.set(cache_key, result)
-            return result
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Request error scraping {url}: {str(e)}")
-            return f"Error scraping {url}: {str(e)}"
-        except Exception as e:
-            logging.error(f"Error scraping {url}: {str(e)}")
-            return f"Error scraping {url}: {str(e)}"
+def scrape_content(url: str) -> str:
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        return soup.get_text()
+    except Exception as e:
+        logging.error(f"Error scraping {url}: {str(e)}")
+        return ""
 
 # Initialize the cache
 cache = Cache()
 
 # Create instances of the tools
 search_tool = SearchTool(cache)
-scrape_tool = ScrapeTool(cache)
-
-# Configure logging
-logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Example usage
-query = "things to visit in germany"
+query = "Django developer jobs in Germany"
 search_results = search_tool.search(query)
-print(search_results)
-for url in search_results:
-    print(scrape_tool.scrape(url))
+print("The jobs are at the following links:", search_results)
+
+# Scrape the content from the URLs
+scraped_content = [load_data(search_results) for url in search_results]  # load_data(search_results)
+print("Scraped content:", scraped_content)
+
+# Load the data using LangChain WebBaseLoader
+
+
+# Setup LangChain with a prompt and an LLM (e.g., OpenAI)
+
+prompt = PromptTemplate(input_variables=["content"], template="Analyze the following content: {content}")
+
+chain = LLMChain(llm=llm, prompt=prompt)
+
+# Process each piece of content with the LLM
+for content in scraped_content:
+    result = chain.run(content)
+    print("LLM Analysis:", result)
