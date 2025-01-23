@@ -1,0 +1,12 @@
+provider: "groq"  # or "openai"
+models:
+  openai:
+    job_analyzer: "gpt-4-turbo"
+    cv_insights: "gpt-4"
+    cv_customizer: "gpt-4"
+    cl_customizer: "gpt-4"
+  groq:
+    job_analyzer: "mixtral-8x7b-32768"
+    cv_insights: "llama2-70b-4096"
+    cv_customizer: "mixtral-8x7b-32768"
+    cl_customizer: "llama2-70b-4096"
